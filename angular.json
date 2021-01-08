@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "teste-unitario"
+  "defaultProject": "teste-unitario",
+  "cli": {
+    "analytics": "9f509db0-aa25-4b54-a8a4-56c8e96a64da"
+  }
 }
