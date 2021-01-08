@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { tap, catchError, delay } from 'rxjs/operators';
+import { interval, merge, Observable, of } from 'rxjs';
+import { tap, catchError, delay, take, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 
 interface jsonStruct {
@@ -13,14 +13,43 @@ interface jsonStruct {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit{
   title = 'teste-unitario';
 
   combinedAtEnd: jsonStruct[] = [];
   realTime: jsonStruct[] = []; // évite le new
 
 
-  ngOnInit() {  }
+  ngOnInit() {
+
+    // Time Out
+    let source = interval(1000).pipe(
+      map(res=>{
+        return 1
+      }),
+      take(2));
+    let source1 = interval(100).pipe(
+      map(res=>{
+        return 2
+      }),
+      take(1));
+    let source2 = interval(500).pipe(
+      map(res=>{
+        return 3
+      }),
+      take(1));
+
+    const plusTime = merge(source, source1, source2)
+
+   const a =  plusTime.subscribe(res=>{
+      console.log('--->', res)
+    })
+
+    console.log('SUBSCRIBE ABERTO', a);
+    setTimeout(function(){   console.log('SUBISCRIBE FECHADO', a); }, 5000);
+
+  }
+
 
   testForkJoin() {
 
@@ -52,7 +81,6 @@ export class AppComponent implements OnInit {
 
       const obsArray: Observable<jsonStruct>[] = [];
       obsArray.push(obs1, obs2, obs3, obs4);
-      console.log(obsArray)
 
       forkJoin(obsArray).subscribe(res => {
         //this.combined = [res[0], res[1], res[2]];
